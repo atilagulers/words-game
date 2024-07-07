@@ -8,16 +8,16 @@ import (
 	"regexp"
 )
 
-var delimiters *regexp.Regexp = regexp.MustCompile(`[,:;.\s]+`)
+var delimiters *regexp.Regexp = regexp.MustCompile(`[,:;.\s]+()`)
 
 func main() {
 	const filePath string = "words.txt"
 
-	writeFileToMap(filePath)
+	results := writeFileToMap(filePath)
 
-	//for key, _ := range words {
-	//	fmt.Println(result)
-	//}
+	for _, val := range results {
+		fmt.Println(val)
+	}
 
 }
 
@@ -27,11 +27,11 @@ func writeFileToMap(filePath string) []string {
 		log.Fatal(err)
 	}
 
+	results := []string{}
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		result := delimiters.Split(line, -1)
-		fmt.Println(result)
+		results = append(results, delimiters.Split(line, -1)...)
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
@@ -39,5 +39,5 @@ func writeFileToMap(filePath string) []string {
 
 	file.Close()
 
-	return []string{}
+	return results
 }
