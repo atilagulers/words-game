@@ -28,25 +28,26 @@ func StartGame(filePath, delimiters string) error {
 	// Print the randomly picked word
 	fmt.Printf("Answer: %+v\n", answerWord)
 
-	var userGuess string
+	fmt.Println(answerWord.CryptedContent)
+
+	var userGuess rune
 	for {
-		colors.PrintBlue("\nPlease enter a letter guess")
+		colors.PrintBlue("\nPlease enter a letter guess: ")
 		userGuess, err = input.GetLetterInput()
 		if err != nil {
-			fmt.Printf("Invalid input. Your guess: %v, Err: %v", userGuess, err)
+			fmt.Printf("Invalid input.\nErr: %v", err)
 			continue
 		}
-		break
+
+		letterExist := answerWord.CheckLetterExist(string(userGuess))
+
+		if letterExist {
+			answerWord.RevealLetter(userGuess)
+		}
+
+		fmt.Println(answerWord.CryptedContent)
+
 	}
-
-	letterExist := answerWord.CheckLetterExist("e")
-
-	if letterExist {
-		fmt.Println("LETTER FOUND !!!!!")
-		answerWord.RevealLetter('e')
-	}
-
-	fmt.Printf("Random Word: %+v\n", answerWord)
 
 	return nil
 }
