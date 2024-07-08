@@ -6,14 +6,16 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strings"
 )
-
-var delimiters *regexp.Regexp = regexp.MustCompile(`[,:;.\s]+()`)
 
 func main() {
 	const filePath string = "words.txt"
+	delimiters := `[,:;.\s()]+`
 
-	results := writeFileToMap(filePath)
+	results := readLinesFromFile(filePath)
+
+	results = splitByDelimiters(results, delimiters)
 
 	for _, val := range results {
 		fmt.Println(val)
@@ -21,17 +23,17 @@ func main() {
 
 }
 
-func writeFileToMap(filePath string) []string {
+func readLinesFromFile(filePath string) []string {
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	results := []string{}
+	lines := []string{}
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		results = append(results, delimiters.Split(line, -1)...)
+		lines = append(lines, line)
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
@@ -39,5 +41,13 @@ func writeFileToMap(filePath string) []string {
 
 	file.Close()
 
-	return results
+	return lines
+}
+
+func splitByDelimiters(text []string, delimiters string) []string {
+	delimitersRegex := regexp.MustCompile(delimiters)
+	textStr := strings.Join(text, " ")
+	splitText := delimitersRegex.Split(textStr, -1)
+
+	return splitText
 }
