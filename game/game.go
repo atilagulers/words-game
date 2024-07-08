@@ -32,6 +32,7 @@ func StartGame(filePath, delimiters string) error {
 
 	var userGuess rune
 	for {
+		var isGameFinished bool = false
 		colors.PrintBlue("\nPlease enter a letter guess: ")
 		userGuess, err = input.GetLetterInput()
 		if err != nil {
@@ -42,10 +43,17 @@ func StartGame(filePath, delimiters string) error {
 		letterExist := answerWord.CheckLetterExist(string(userGuess))
 
 		if letterExist {
-			answerWord.RevealLetter(userGuess)
+			isGameFinished = answerWord.RevealLetter(userGuess)
 		}
 
 		fmt.Println(answerWord.CryptedContent)
+
+		if isGameFinished {
+
+			colors.PrintGreen("You win!")
+			break
+
+		}
 
 	}
 

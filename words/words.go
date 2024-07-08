@@ -9,6 +9,8 @@ import (
 	"example.com/words-game/textproc"
 )
 
+const encryptChar = '*'
+
 // Word represents a word with its content, length, and usage count.
 type Word struct {
 	Content        string
@@ -46,7 +48,7 @@ func (w *Word) CheckLetterExist(letter string) bool {
 }
 
 // RevealLetter updates the CryptedContent with the given letter if it exists in Content.
-func (w *Word) RevealLetter(letter rune) {
+func (w *Word) RevealLetter(letter rune) bool {
 	letter = unicode.ToLower(letter)
 
 	cryptedRunes := []rune(w.CryptedContent)
@@ -59,6 +61,14 @@ func (w *Word) RevealLetter(letter rune) {
 	}
 
 	w.CryptedContent = string(cryptedRunes)
+
+	// Check if there are any encrypted characters left
+	for _, char := range cryptedRunes {
+		if char == encryptChar {
+			return false
+		}
+	}
+	return true
 }
 
 // GetWordList processes the file and returns a list of Word instances
@@ -97,7 +107,7 @@ func PickRandomWord(wordList []*Word) *Word {
 }
 
 func encryptWord(word string) string {
-	return strings.Repeat("*", len(word))
+	return strings.Repeat(string(encryptChar), len(word))
 }
 
 func getLines(filePath, delimiters string) ([]string, error) {
