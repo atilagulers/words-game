@@ -17,14 +17,24 @@ func StartGame(filePath, delimiters string) error {
 		return err
 	}
 
-	randomWord := words.PickRandomWord(wordList)
+	answerWord := words.PickRandomWord(wordList)
 
 	// Print the word list
-	for _, word := range wordList {
-		fmt.Printf("%+v\n", word)
-	}
+	//for _, word := range wordList {
+	//	fmt.Printf("%+v\n", word)
+	//}
 
 	// Print the randomly picked word
-	fmt.Printf("Random Word: %+v\n", randomWord)
+	fmt.Printf("Answer: %+v\n", answerWord)
+
+	letterExist := answerWord.CheckLetterExist("e")
+
+	if letterExist {
+		fmt.Println("LETTER FOUND !!!!!")
+		answerWord.RevealLetter('e')
+	}
+
+	fmt.Printf("Random Word: %+v\n", answerWord)
+
 	return nil
 }

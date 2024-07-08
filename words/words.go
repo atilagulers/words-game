@@ -2,6 +2,8 @@ package words
 
 import (
 	"math/rand"
+	"strings"
+	"unicode"
 
 	"example.com/words-game/fileops"
 	"example.com/words-game/textproc"
@@ -9,19 +11,21 @@ import (
 
 // Word represents a word with its content, length, and usage count.
 type Word struct {
-	Content    string
-	Length     int
-	UsageCount int
-	Used       bool
+	Content        string
+	CryptedContent string
+	Length         int
+	UsageCount     int
+	Used           bool
 }
 
 // NewWord creates a new Word instance.
 func NewWord(content string) *Word {
 	return &Word{
-		Content:    content,
-		Length:     len(content),
-		UsageCount: 0,
-		Used:       false,
+		Content:        content,
+		CryptedContent: encryptWord(content),
+		Length:         len(content),
+		UsageCount:     0,
+		Used:           false,
 	}
 }
 
@@ -31,17 +35,47 @@ func (w *Word) Use() {
 	w.Used = true
 }
 
+func (w *Word) ToLowerContent() {
+	w.Content = strings.ToLower(w.Content)
+}
+
+// CheckLetter checks if the letter is in the Content
+func (w *Word) CheckLetterExist(letter string) bool {
+	letter = strings.ToLower(letter)
+	return strings.Contains(w.Content, letter)
+}
+
+// RevealLetter updates the CryptedContent with the given letter if it exists in Content.
+func (w *Word) RevealLetter(letter rune) {
+	letter = unicode.ToLower(letter)
+
+	cryptedRunes := []rune(w.CryptedContent)
+	contentRunes := []rune(w.Content)
+
+	for i, char := range contentRunes {
+		if char == letter {
+			cryptedRunes[i] = letter
+		}
+	}
+
+	w.CryptedContent = string(cryptedRunes)
+}
+
 // GetWordList processes the file and returns a list of Word instances
 func GetWordList(filePath, delimiters string) ([]*Word, error) {
 	lines, err := getLines(filePath, delimiters)
 	if err != nil {
 		return nil, err
 	}
+
 	wordCounts := textproc.CreateMapFromSlice(lines)
 	wordList := make([]*Word, 0, len(*wordCounts))
 
 	for word := range *wordCounts {
-		wordList = append(wordList, NewWord(word))
+		newWord := NewWord(word)
+		newWord.ToLowerContent()
+
+		wordList = append(wordList, newWord)
 
 	}
 
@@ -60,6 +94,10 @@ func PickRandomWord(wordList []*Word) *Word {
 	randomWord.Use()
 
 	return randomWord
+}
+
+func encryptWord(word string) string {
+	return strings.Repeat("*", len(word))
 }
 
 func getLines(filePath, delimiters string) ([]string, error) {

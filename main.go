@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"example.com/words-game/colors"
 	"example.com/words-game/game"
 )
 
@@ -19,10 +20,12 @@ const (
 
 func main() {
 	const filePath string = "words.txt"
-	delimiters := `[',:;.\s()]+`
+	delimiters := `[',:;.\s()-]+`
 
 	err := game.StartGame(filePath, delimiters)
 	if err != nil {
+		colors.PrintRed("Error starting game:")
 		log.Fatal(err)
 	}
+
 }
