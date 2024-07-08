@@ -8,6 +8,10 @@ import (
 	"example.com/words-game/words"
 )
 
+type Player struct {
+	GuessedLetters map[rune]int
+}
+
 // StartGame initiates the word game with given file path and delimiters
 func StartGame(filePath, delimiters string) error {
 
@@ -20,42 +24,51 @@ func StartGame(filePath, delimiters string) error {
 
 	answerWord := words.PickRandomWord(wordList)
 
-	// Print the word list
-	//for _, word := range wordList {
-	//	fmt.Printf("%+v\n", word)
-	//}
-
 	// Print the randomly picked word
 	fmt.Printf("Answer: %+v\n", answerWord)
 
-	fmt.Println(answerWord.CryptedContent)
+	fmt.Println("Word:", answerWord.CryptedContent)
 
 	var userGuess rune
 	for {
-		var isGameFinished bool = false
 		colors.PrintBlue("\nPlease enter a letter guess: ")
-		userGuess, err = input.GetLetterInput()
-		if err != nil {
-			fmt.Printf("Invalid input.\nErr: %v", err)
-			continue
-		}
+		userGuess = getUserGuess()
 
-		letterExist := answerWord.CheckLetterExist(string(userGuess))
+		isGameFinished := checkUserGuess(userGuess, answerWord)
 
-		if letterExist {
-			isGameFinished = answerWord.RevealLetter(userGuess)
-		}
-
-		fmt.Println(answerWord.CryptedContent)
+		fmt.Println("Word:", answerWord.CryptedContent)
 
 		if isGameFinished {
-
 			colors.PrintGreen("You win!")
 			break
-
 		}
 
 	}
 
 	return nil
+}
+
+func getUserGuess() rune {
+
+	for {
+		userGuess, err := input.GetLetterInput()
+		if err != nil {
+			fmt.Printf(colors.Red+"\nErr: %v\n"+colors.Reset, err)
+		} else {
+			return userGuess
+		}
+	}
+}
+
+func checkUserGuess(userGuess rune, answerWord *words.Word) bool {
+	letterExist := answerWord.CheckLetterExist(string(userGuess))
+	var isGameFinished bool
+	if letterExist {
+		colors.PrintGreen("Correct!\n")
+		isGameFinished = answerWord.RevealLetter(userGuess)
+	} else {
+		colors.PrintRed("Wrong!\n")
+	}
+
+	return isGameFinished
 }
