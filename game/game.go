@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"example.com/words-game/colors"
+	"example.com/words-game/input"
 	"example.com/words-game/words"
 )
 
@@ -26,6 +27,17 @@ func StartGame(filePath, delimiters string) error {
 
 	// Print the randomly picked word
 	fmt.Printf("Answer: %+v\n", answerWord)
+
+	var userGuess string
+	for {
+		colors.PrintBlue("\nPlease enter a letter guess")
+		userGuess, err = input.GetLetterInput()
+		if err != nil {
+			fmt.Printf("Invalid input. Your guess: %v, Err: %v", userGuess, err)
+			continue
+		}
+		break
+	}
 
 	letterExist := answerWord.CheckLetterExist("e")
 
