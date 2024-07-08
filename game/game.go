@@ -27,7 +27,7 @@ func StartGame(filePath, delimiters string) error {
 	// Print the randomly picked word
 	fmt.Printf("Answer: %+v\n", answerWord)
 
-	fmt.Println("Word:", answerWord.CryptedContent)
+	fmt.Printf(colors.Cyan+"\nWord: %v\n"+colors.Reset, answerWord.CryptedContent)
 
 	var userGuess rune
 	for {
