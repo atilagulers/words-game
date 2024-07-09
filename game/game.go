@@ -5,15 +5,13 @@ import (
 
 	"example.com/words-game/colors"
 	"example.com/words-game/input"
+	"example.com/words-game/player"
 	"example.com/words-game/words"
 )
 
-type Player struct {
-	GuessedLetters map[rune]int
-}
-
 // StartGame initiates the word game with given file path and delimiters
 func StartGame(filePath, delimiters string) error {
+	player := player.New()
 
 	colors.PrintBlue("Game is starting...\n")
 	//time.Sleep(1 * time.Second)
@@ -28,6 +26,8 @@ func StartGame(filePath, delimiters string) error {
 	fmt.Printf("Answer: %+v\n", answerWord)
 
 	fmt.Printf(colors.Cyan+"\nWord: %v\n"+colors.Reset, answerWord.CryptedContent)
+
+	player.PrintAlphabet()
 
 	var userGuess rune
 	for {
