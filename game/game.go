@@ -23,7 +23,8 @@ func StartGame(filePath, delimiters string) error {
 	var playerGuess rune
 
 	for {
-		fmt.Printf(colors.Cyan+"\nWord: %v\n"+colors.Reset, answerWord.CryptedContent)
+		fmt.Printf(colors.White + "\nWord: " + colors.Reset)
+		fmt.Printf(colors.Magenta+"%v\n"+colors.Reset, answerWord.CryptedContent)
 
 		player.PrintAlphabet()
 		playerGuess, err = player.GetPlayerGuess()
