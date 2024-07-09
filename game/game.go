@@ -22,21 +22,22 @@ func StartGame(filePath, delimiters string) error {
 
 	answerWord := words.PickRandomWord(wordList)
 
-	// Print the randomly picked word
-	fmt.Printf("Answer: %+v\n", answerWord)
-
-	fmt.Printf(colors.Cyan+"\nWord: %v\n"+colors.Reset, answerWord.CryptedContent)
-
-	player.PrintAlphabet()
-
-	var userGuess rune
+	var playerGuess rune
 	for {
+		fmt.Printf(colors.Cyan+"\nWord: %v\n"+colors.Reset, answerWord.CryptedContent)
+
+		player.PrintAlphabet()
+
 		colors.PrintBlue("\nPlease enter a letter guess: ")
-		userGuess = getUserGuess()
 
-		isGameFinished := checkUserGuess(userGuess, answerWord)
+		playerGuess = getPlayerGuess()
 
-		fmt.Println("Word:", answerWord.CryptedContent)
+		err := player.UseLetter(playerGuess)
+		if err != nil {
+			fmt.Printf(colors.Red+"\nErr: %v\n"+colors.Reset, err)
+			continue
+		}
+		isGameFinished := chooseLetter(playerGuess, answerWord)
 
 		if isGameFinished {
 			colors.PrintGreen("You win!")
@@ -48,24 +49,35 @@ func StartGame(filePath, delimiters string) error {
 	return nil
 }
 
-func getUserGuess() rune {
+func getPlayerGuess() rune {
 
 	for {
-		userGuess, err := input.GetLetterInput()
+		playerGuess, err := input.GetLetterInput()
 		if err != nil {
 			fmt.Printf(colors.Red+"\nErr: %v\n"+colors.Reset, err)
 		} else {
-			return userGuess
+			return playerGuess
 		}
 	}
 }
 
-func checkUserGuess(userGuess rune, answerWord *words.Word) bool {
-	letterExist := answerWord.CheckLetterExist(string(userGuess))
+func checkPlayerGuess(playerGuess rune, player *player.Player) error {
+	err := player.UseLetter(playerGuess)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func chooseLetter(playerGuess rune, answerWord *words.Word) bool {
+
+	letterExist := answerWord.CheckLetterExist(string(playerGuess))
 	var isGameFinished bool
 	if letterExist {
 		colors.PrintGreen("Correct!\n")
-		isGameFinished = answerWord.RevealLetter(userGuess)
+		isGameFinished = answerWord.RevealLetter(playerGuess)
 	} else {
 		colors.PrintRed("Wrong!\n")
 	}

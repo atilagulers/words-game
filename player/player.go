@@ -1,7 +1,6 @@
 package player
 
 import (
-	"errors"
 	"fmt"
 
 	"example.com/words-game/colors"
