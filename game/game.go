@@ -23,16 +23,16 @@ func StartGame(filePath, delimiters string) error {
 	var playerGuess rune
 
 	for {
-		fmt.Printf(colors.White + "\nWord: " + colors.Reset)
-		fmt.Printf(colors.Magenta+"%v\n"+colors.Reset, answerWord.CryptedContent)
+		printWordAndAlphabet(answerWord, player)
 
-		player.PrintAlphabet()
+		// Get player guess
 		playerGuess, err = player.GetPlayerGuess()
 		if err != nil {
 			fmt.Printf(colors.Red+"\nErr: %v\n"+colors.Reset, err)
 			continue
 		}
 
+		// Use player letter from alphabet
 		err := player.UseLetter(playerGuess)
 		if err != nil {
 			fmt.Printf(colors.Red+"\nErr: %v\n"+colors.Reset, err)
@@ -62,4 +62,11 @@ func chooseLetter(playerGuess rune, answerWord *words.Word) bool {
 	}
 
 	return isGameFinished
+}
+
+func printWordAndAlphabet(answerWord *words.Word, player *players.Player) {
+	fmt.Printf(colors.White + "\nWord: " + colors.Reset)
+	fmt.Printf(colors.Magenta+"%v\n"+colors.Reset, answerWord.CryptedContent)
+	player.PrintAlphabet()
+
 }
