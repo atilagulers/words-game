@@ -1,9 +1,10 @@
-package player
+package players
 
 import (
 	"fmt"
 
 	"example.com/words-game/colors"
+	"example.com/words-game/input"
 )
 
 type Player struct {
@@ -19,6 +20,19 @@ func New() *Player {
 		0,
 		10,
 	}
+}
+
+func (p *Player) GetPlayerGuess() (rune, error) {
+	for {
+		colors.PrintBlue("\nPlease enter a letter guess: ")
+		playerGuess, err := input.GetLetterInput()
+		if err != nil {
+			return 0, err
+		} else {
+			return playerGuess, nil
+		}
+	}
+
 }
 
 func (p *Player) PrintAlphabet() {
